@@ -296,6 +296,10 @@ public extension PDFGenerator {
 
         let pagination = document.pagination
 
+        for (container, headerFooter) in headerFooterObjects {
+            result += try headerFooter.copy.calculate(generator: self, container: container)
+        }
+        
         if pagination.container != .none {
             if !pagination.hiddenPages.contains(currentPage), currentPage >= pagination.range.start, currentPage <= pagination.range.end {
                 let text = pagination.style.format(page: currentPage, total: totalPages)
@@ -303,9 +307,6 @@ public extension PDFGenerator {
                 let textObject = PDFAttributedTextObject(attributedText: PDFAttributedText(text: attributedText))
                 result += try textObject.calculate(generator: self, container: pagination.container)
             }
-        }
-        for (container, headerFooter) in headerFooterObjects {
-            result += try headerFooter.copy.calculate(generator: self, container: container)
         }
 
         if debug {
